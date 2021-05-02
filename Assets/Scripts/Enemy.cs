@@ -27,14 +27,14 @@ public class Enemy : MonoBehaviour
             if (player != null)
             {
                 player.Damage();
-                Destroy(gameObject);
+                Destroy(this.gameObject);
             }
         }
 
         if (other.CompareTag("Laser"))
         {
             Destroy(other.gameObject);
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
     }
 }

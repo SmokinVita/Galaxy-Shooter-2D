@@ -20,12 +20,12 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnRoutine()
     {
-        while (!_stopSpawning)
+        while (_stopSpawning == false)
         {
             Vector3 spawnArea = new Vector3(UnityEngine.Random.Range(-9, 9), 8, 0);
             GameObject newEnemy = Instantiate(_enemyPrefab, spawnArea, transform.rotation);
             newEnemy.transform.parent = _enemyContainer.transform;
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(5.0f);
         }
     }
 
