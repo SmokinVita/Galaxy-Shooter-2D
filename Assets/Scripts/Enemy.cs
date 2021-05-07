@@ -8,6 +8,14 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float _speed = 4f;
 
+    private Player player;
+
+    private void Start()
+    {
+        player = GameObject.Find("Player").GetComponent<Player>();
+
+    }
+
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -17,13 +25,16 @@ public class Enemy : MonoBehaviour
             float newXPos = Random.Range(-9f, 9f);
             transform.position = new Vector3(newXPos, 7.8f, 0);
         }
+
+        
     }
 
-    private void OnTriggerEnter(Collider other)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player"))
+        
+        if (collision.CompareTag("Player"))
         {
-            Player player = other.GetComponent<Player>();
             if (player != null)
             {
                 player.Damage();
@@ -31,9 +42,13 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("Laser"))
+        if (collision.CompareTag("Laser"))
         {
-            Destroy(other.gameObject);
+            Destroy(collision.gameObject);
+
+            if (player != null)
+                player.AddScore();
+
             Destroy(this.gameObject);
         }
     }
