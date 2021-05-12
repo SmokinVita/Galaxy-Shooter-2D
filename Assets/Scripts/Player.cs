@@ -13,6 +13,12 @@ public class Player : MonoBehaviour
     private float _speed = 3.5f;
     [SerializeField]
     private int _score;
+    [SerializeField]
+    private GameObject _rightEngine;
+    [SerializeField]
+    private GameObject _leftEngine;
+    [SerializeField]
+    private GameObject _explosionPrefab;
 
     [Header("Laser Info")]
     [SerializeField]
@@ -39,6 +45,12 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isShieldActive = false;
 
+    [Header("Audio")]
+    [SerializeField]
+    private AudioClip _laserShotAudio;
+    [SerializeField]
+    private AudioClip _explosionAudio;
+    private AudioSource _audioSource;
 
     void Start()
     {
@@ -52,6 +64,13 @@ public class Player : MonoBehaviour
 
         if (_uiManager == null)
             Debug.LogError("UI manager is NULL!");
+
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+            Debug.LogError("Audio Source is NULL!");
+
+        _rightEngine.SetActive(false);
+        _leftEngine.SetActive(false);
     }
 
     void Update()
@@ -60,6 +79,8 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
             FireLaser();
+
+        
     }
 
     private void FireLaser()
@@ -76,6 +97,9 @@ public class Player : MonoBehaviour
             Instantiate(_laserPrefab, transform.position + offset, Quaternion.identity);
         }
         StartCoroutine(LaserCoolDown());
+
+        _audioSource.clip = _laserShotAudio;
+        _audioSource.Play();
     }
 
 
@@ -92,10 +116,7 @@ public class Player : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-        if (_isSpeedBoostActive)
-            transform.Translate(direction * (_speed * _speedMultipler) * Time.deltaTime);
-        else
-            transform.Translate(direction * _speed * Time.deltaTime);
+        transform.Translate(direction * _speed * Time.deltaTime);
 
         if (transform.position.y >= 0)
             transform.position = new Vector3(transform.position.x, 0, 0);
@@ -121,10 +142,18 @@ public class Player : MonoBehaviour
 
         _uiManager.SetLivesSprite(_lives);
 
+        if (_lives == 2)
+            _rightEngine.SetActive(true);
+        else if (_lives == 1)
+            _leftEngine.SetActive(true);
+
         if (_lives < 1)
         {
             _spawnManager.OnPlayerDeath();
             _uiManager.GameOver();
+            _audioSource.clip = _explosionAudio;
+            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            _audioSource.Play();
             Destroy(gameObject);
         }
     }
@@ -143,14 +172,14 @@ public class Player : MonoBehaviour
 
     public void SpeedBoostActivate()
     {
-        _isSpeedBoostActive = true;
+        _speed *= _speedMultipler;
         StartCoroutine(SpeedBoostDeactivate());
     }
 
     IEnumerator SpeedBoostDeactivate()
     {
         yield return new WaitForSeconds(_powerDown);
-        _isSpeedBoostActive = false;
+        _speed /= _speedMultipler;
     }
 
     public void ShieldActivate()

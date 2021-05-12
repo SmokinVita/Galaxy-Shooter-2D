@@ -9,6 +9,16 @@ public class Powerup : MonoBehaviour
     private float _speed = 3;
     [SerializeField]//0 = Triple Shot, 1 = Speed, 2 = Shield
     private int _powerupID;
+    [SerializeField]
+    private AudioClip _powerUpAudio;
+    private AudioSource _audioSource;
+
+    private void Start()
+    {
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+            Debug.LogError("Audio Source on a Power Up is NULL!");
+    }
 
     void Update()
     {
@@ -25,18 +35,19 @@ public class Powerup : MonoBehaviour
             Player player = collision.GetComponent<Player>();
             if (player != null)
             {
+                _audioSource.clip = _powerUpAudio;
+                _audioSource.Play();
+
                 switch (_powerupID)
                 {
                     case 0:
                         player.TripleShotActivate();
                         break;
                     case 1:
-
-                        Debug.Log("Speed was collected");
+                        player.SpeedBoostActivate();
                         break;
                     case 2:
                         player.ShieldActivate();
-                        Debug.Log("Collected Shield");
                         break;
                     default:
                         Debug.Log("No powerup selected!");

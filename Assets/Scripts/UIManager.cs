@@ -14,14 +14,24 @@ public class UIManager : MonoBehaviour
     private Sprite[] _livesSprite;
     [SerializeField]
     private Text _gameOverText;
+    [SerializeField]
+    private Text _gameResetText;
 
     [SerializeField]
     private float _flickerTimer;
+
+    [SerializeField]
+    private GameManager _gameManager;
 
     private void Start()
     {
         _scoreText.text = $"Score: {0}";
         _gameOverText.gameObject.SetActive(false);
+        _gameResetText.gameObject.SetActive(false);
+
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+            Debug.Log("Game Manager is NULL!");
     }
 
     public void SetScoreText(int score)
@@ -37,6 +47,8 @@ public class UIManager : MonoBehaviour
     public void GameOver()
     {
         _gameOverText.gameObject.SetActive(true);
+        _gameResetText.gameObject.SetActive(true);
+        _gameManager.GameOver();
         StartCoroutine(GameOverFlickerRoutine());
     }
 
@@ -46,8 +58,10 @@ public class UIManager : MonoBehaviour
         {
             yield return new WaitForSeconds(_flickerTimer);
             _gameOverText.gameObject.SetActive(false);
+            _gameResetText.gameObject.SetActive(false);
             yield return new WaitForSeconds(_flickerTimer);
             _gameOverText.gameObject.SetActive(true);
+            _gameResetText.gameObject.SetActive(true);
         }
     }
 }
