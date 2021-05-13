@@ -80,7 +80,8 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
             FireLaser();
 
-        
+       
+
     }
 
     private void FireLaser()
@@ -116,7 +117,11 @@ public class Player : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-        transform.Translate(direction * _speed * Time.deltaTime);
+        //while left shift is down increase speed while fuel
+        if (Input.GetKey(KeyCode.LeftShift))
+            transform.Translate(direction * (_speed * 3) * Time.deltaTime);
+        else
+            transform.Translate(direction * _speed * Time.deltaTime);
 
         if (transform.position.y >= 0)
             transform.position = new Vector3(transform.position.x, 0, 0);
