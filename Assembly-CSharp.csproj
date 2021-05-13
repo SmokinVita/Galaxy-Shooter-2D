@@ -262,9 +262,6 @@
     <Reference Include="UnityEditor">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.1.8f1\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Filebase">
-      <HintPath>Assets\GameDevHQ\FileBase\Plugin\Filebase.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Assets\GameDevHQ\FileBase\Plugin\Newtonsoft.Json.dll</HintPath>
     </Reference>

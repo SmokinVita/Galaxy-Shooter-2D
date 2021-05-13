@@ -40,6 +40,12 @@ public class Player : MonoBehaviour
     private float _speedMultipler = 2f;
     [SerializeField]
     private GameObject _shield;
+    [SerializeField]
+    private int _currentShieldStrength;
+    [SerializeField]
+    private int _maxShieldStrength = 3;
+
+    private Renderer _shieldRenderer;
 
     private bool _isSpeedBoostActive = false;
     private bool _isTripleShotActive = false;
@@ -65,6 +71,8 @@ public class Player : MonoBehaviour
         if (_uiManager == null)
             Debug.LogError("UI manager is NULL!");
 
+        _shieldRenderer = _shield.GetComponent<Renderer>();
+
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
             Debug.LogError("Audio Source is NULL!");
@@ -80,7 +88,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
             FireLaser();
 
-       
+
 
     }
 
@@ -138,9 +146,17 @@ public class Player : MonoBehaviour
     {
         if (_isShieldActive)
         {
-            _isShieldActive = false;
-            _shield.SetActive(false);
-            return;
+            if (_currentShieldStrength > 0)
+            {
+                _currentShieldStrength--;
+                ShieldDisplayStrength(_currentShieldStrength);
+                return;
+            }
+            else
+            {
+                _isShieldActive = false;
+                _shield.SetActive(false);
+            }
         }
 
         _lives--;
@@ -189,8 +205,34 @@ public class Player : MonoBehaviour
 
     public void ShieldActivate()
     {
-        _isShieldActive = true;
-        _shield.SetActive(true);
+        if (_currentShieldStrength == _maxShieldStrength)
+        {
+            return;
+        }
+        else
+        {
+            _isShieldActive = true;
+            _shield.SetActive(true);
+            _currentShieldStrength++;
+            ShieldDisplayStrength(_currentShieldStrength);
+        }
+    }
+
+    private void ShieldDisplayStrength(int strength)
+    {
+
+        switch (strength)
+        {
+            case 1:
+                _shieldRenderer.material.color = new Color(1, 1, 1, .25f);
+                break;
+            case 2:
+                _shieldRenderer.material.color = new Color(1, 1, 1, .50f);
+                break;
+            case 3:
+                _shieldRenderer.material.color = new Color(1, 1, 1, 1);
+                break;
+        }
     }
 
     public void AddScore()
