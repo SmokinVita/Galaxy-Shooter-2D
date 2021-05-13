@@ -16,7 +16,10 @@ public class UIManager : MonoBehaviour
     private Text _gameOverText;
     [SerializeField]
     private Text _gameResetText;
-
+    [SerializeField]
+    private Text _outOfAmmoText;
+    [SerializeField]
+    private Text _ammoText;
     [SerializeField]
     private float _flickerTimer;
 
@@ -42,6 +45,17 @@ public class UIManager : MonoBehaviour
     public void SetLivesSprite(int currentLives)
     {
         _livesImg.sprite = _livesSprite[currentLives];
+    }
+
+    public void Ammo(int currentAmmo)
+    {
+        //if ammo is less than or equal to zero enable text to play animation.
+        _ammoText.text = $"Ammo: {currentAmmo}";
+
+        if (currentAmmo <= 0)
+            _outOfAmmoText.gameObject.SetActive(true);
+        else if (currentAmmo > 0)
+            _outOfAmmoText.gameObject.SetActive(false);
     }
 
     public void GameOver()

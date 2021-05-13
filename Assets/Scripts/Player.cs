@@ -25,6 +25,8 @@ public class Player : MonoBehaviour
     private GameObject _laserPrefab;
     [SerializeField]
     private float laserCoolDown = .5f;
+    [SerializeField]
+    private int _ammo;
     private bool _canLaserFire = true;
 
 
@@ -72,11 +74,14 @@ public class Player : MonoBehaviour
             Debug.LogError("UI manager is NULL!");
 
         _shieldRenderer = _shield.GetComponent<Renderer>();
+        if (_shieldRenderer == null)
+            Debug.LogError("The Renderer is NULL!");
 
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
             Debug.LogError("Audio Source is NULL!");
 
+        _uiManager.Ammo(_ammo);
         _rightEngine.SetActive(false);
         _leftEngine.SetActive(false);
     }
@@ -85,8 +90,13 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
-        if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
+        if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire && _ammo > 0)
             FireLaser();
+        else if (_ammo == 0)
+        {
+            _uiManager.Ammo(_ammo);
+            Debug.Log("Out of Ammo!");
+        }
 
 
 
@@ -95,6 +105,12 @@ public class Player : MonoBehaviour
     private void FireLaser()
     {
         _canLaserFire = false;
+       //if ammo is greater than 0 canLaserFire is true
+       //fire take away ammo
+       //display on screen
+       //else if 
+       //flash warning need to reload
+
         Vector3 offset = new Vector3(0, 1.14f, 0);
 
         if (_isTripleShotActive)
@@ -105,6 +121,10 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPrefab, transform.position + offset, Quaternion.identity);
         }
+
+        _ammo--;
+        _uiManager.Ammo(_ammo);
+
         StartCoroutine(LaserCoolDown());
 
         _audioSource.clip = _laserShotAudio;

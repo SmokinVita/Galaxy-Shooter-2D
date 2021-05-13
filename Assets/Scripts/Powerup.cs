@@ -9,16 +9,10 @@ public class Powerup : MonoBehaviour
     private float _speed = 3;
     [SerializeField]//0 = Triple Shot, 1 = Speed, 2 = Shield
     private int _powerupID;
+
     [SerializeField]
     private AudioClip _powerUpAudio;
-    private AudioSource _audioSource;
 
-    private void Start()
-    {
-        _audioSource = GetComponent<AudioSource>();
-        if (_audioSource == null)
-            Debug.LogError("Audio Source on a Power Up is NULL!");
-    }
 
     void Update()
     {
@@ -32,11 +26,13 @@ public class Powerup : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            
+            
+
             Player player = collision.GetComponent<Player>();
             if (player != null)
             {
-                _audioSource.clip = _powerUpAudio;
-                _audioSource.Play();
+                AudioSource.PlayClipAtPoint(_powerUpAudio, transform.position);
 
                 switch (_powerupID)
                 {
