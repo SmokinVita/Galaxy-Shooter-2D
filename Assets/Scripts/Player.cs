@@ -163,6 +163,22 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(11.28f, transform.position.y, 0);
     }
 
+    public void Heal()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            _uiManager.SetLivesSprite(_lives);
+
+            if (_lives == 3)
+                _rightEngine.SetActive(false);
+            else if (_lives == 2)
+                _leftEngine.SetActive(false);
+        }
+        else
+            return;
+    }
+
     public void Damage()
     {
         if (_isShieldActive)
@@ -181,7 +197,6 @@ public class Player : MonoBehaviour
         }
 
         _lives--;
-
         _uiManager.SetLivesSprite(_lives);
 
         if (_lives == 2)

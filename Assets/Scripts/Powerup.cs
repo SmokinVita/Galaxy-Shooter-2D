@@ -48,6 +48,9 @@ public class Powerup : MonoBehaviour
                     case 3:
                         player.RefillAmmo();
                         break;
+                    case 4:
+                        player.Heal();
+                        break;
                     default:
                         Debug.Log("No powerup selected!");
                         break;
