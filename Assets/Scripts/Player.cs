@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     private float laserCoolDown = .5f;
     [SerializeField]
     private int _ammo;
+    private int _maxAmmo = 15;
     private bool _canLaserFire = true;
 
 
@@ -90,45 +91,45 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
-        if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire && _ammo > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
             FireLaser();
-        else if (_ammo == 0)
-        {
-            _uiManager.Ammo(_ammo);
-            Debug.Log("Out of Ammo!");
-        }
-
-
 
     }
 
     private void FireLaser()
     {
-        _canLaserFire = false;
-       //if ammo is greater than 0 canLaserFire is true
-       //fire take away ammo
-       //display on screen
-       //else if 
-       //flash warning need to reload
-
-        Vector3 offset = new Vector3(0, 1.14f, 0);
-
-        if (_isTripleShotActive)
+        if (_ammo > 0)
         {
-            Instantiate(_tripleShot, transform.position + offset, Quaternion.identity);
+            _canLaserFire = false;
+            //if ammo is greater than 0 canLaserFire is true
+            //fire take away ammo
+            //display on screen
+            //else if 
+            //flash warning need to reload
+
+            Vector3 offset = new Vector3(0, 1.14f, 0);
+
+            if (_isTripleShotActive)
+            {
+                Instantiate(_tripleShot, transform.position + offset, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(_laserPrefab, transform.position + offset, Quaternion.identity);
+            }
+
+            _ammo--;
+            _uiManager.Ammo(_ammo);
+
+            StartCoroutine(LaserCoolDown());
+
+            _audioSource.clip = _laserShotAudio;
+            _audioSource.Play();
         }
         else
         {
-            Instantiate(_laserPrefab, transform.position + offset, Quaternion.identity);
+            _uiManager.Ammo(_ammo);
         }
-
-        _ammo--;
-        _uiManager.Ammo(_ammo);
-
-        StartCoroutine(LaserCoolDown());
-
-        _audioSource.clip = _laserShotAudio;
-        _audioSource.Play();
     }
 
 
@@ -197,6 +198,16 @@ public class Player : MonoBehaviour
             _audioSource.Play();
             Destroy(gameObject);
         }
+    }
+
+    public void RefillAmmo()
+    {
+        if (_ammo != 15)
+        {
+            _ammo = _maxAmmo;
+            _uiManager.Ammo(_ammo);
+        }
+
     }
 
     public void TripleShotActivate()

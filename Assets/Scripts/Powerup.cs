@@ -32,7 +32,7 @@ public class Powerup : MonoBehaviour
             Player player = collision.GetComponent<Player>();
             if (player != null)
             {
-                AudioSource.PlayClipAtPoint(_powerUpAudio, transform.position);
+                AudioSource.PlayClipAtPoint(_powerUpAudio, transform.position + new Vector3(0, 0, -10), 1f);
 
                 switch (_powerupID)
                 {
@@ -44,6 +44,9 @@ public class Powerup : MonoBehaviour
                         break;
                     case 2:
                         player.ShieldActivate();
+                        break;
+                    case 3:
+                        player.RefillAmmo();
                         break;
                     default:
                         Debug.Log("No powerup selected!");
