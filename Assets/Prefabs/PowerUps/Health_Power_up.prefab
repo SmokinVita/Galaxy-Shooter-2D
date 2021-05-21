@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 459545646209271548}
   - component: {fileID: 4986415340383958749}
   - component: {fileID: 1448068758720210074}
+  - component: {fileID: 7736591981626403417}
   m_Layer: 0
   m_Name: Health_Power_up
   m_TagString: Untagged
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: -796754033
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: c44b4493d408e2c4da440d30eba3c5fc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0c0a3ffacebf92949befa7a1ca74ceb6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -99,6 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   _powerupID: 4
+  _spawnWeight: 50
+  _spawnRange: 0
   _powerUpAudio: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!50 &4986415340383958749
 Rigidbody2D:
@@ -137,3 +140,22 @@ CircleCollider2D:
   m_Offset: {x: -0.010061175, y: 0.060373828}
   serializedVersion: 2
   m_Radius: 0.92561173
+--- !u!95 &7736591981626403417
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4257021271771119242}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 615b7da4299fb494289958b00da2cf92, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

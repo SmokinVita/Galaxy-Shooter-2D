@@ -49,7 +49,6 @@ public class UIManager : MonoBehaviour
 
     public void Ammo(int currentAmmo)
     {
-        //if ammo is less than or equal to zero enable text to play animation.
         _ammoText.text = $"Ammo: {currentAmmo}";
 
         if (currentAmmo <= 0)

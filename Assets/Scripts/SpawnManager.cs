@@ -13,6 +13,7 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     private GameObject[] _powerups;
+    private GameObject _selectedPowerup;
 
 
     private bool _stopSpawning = false; 
@@ -36,6 +37,30 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(5.0f);
         }
     }
+    
+    private void PickPowerupToSpawn()
+    {
+
+        int totalWeight = 0;
+        for (int i = 0; i < _powerups.Length; i++)
+        {
+            totalWeight += _powerups[i].GetComponent<Powerup>()._spawnWeight;
+        }
+
+        int randomNumber = UnityEngine.Random.Range(0, totalWeight);
+
+        foreach (GameObject powerup in _powerups)
+        {
+            int powerupWeight = powerup.GetComponent<Powerup>()._spawnWeight;
+            if (randomNumber <= powerupWeight)
+            {
+                _selectedPowerup = powerup;
+                break;
+            }
+            randomNumber -= powerupWeight;
+        }
+
+    }
 
     IEnumerator SpawnPowerupRoutine()
     {
@@ -45,12 +70,13 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 spawnArea = new Vector3(UnityEngine.Random.Range(-9, 9), 7, 0);
-            int randomPowerup = UnityEngine.Random.Range(0, _powerups.Length);
-            Instantiate(_powerups[randomPowerup], spawnArea, transform.rotation);
+            PickPowerupToSpawn();
+            Instantiate(_selectedPowerup, spawnArea, transform.rotation);
             float randomSpawnTime = UnityEngine.Random.Range(3, 8);
             yield return new WaitForSeconds(randomSpawnTime);
         }
     }
+
 
     public void OnPlayerDeath()
     {

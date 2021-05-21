@@ -9,6 +9,11 @@ public class Powerup : MonoBehaviour
     private float _speed = 3;
     [SerializeField]//0 = Triple Shot, 1 = Speed, 2 = Shield
     private int _powerupID;
+    [SerializeField]
+    public int _spawnWeight;
+    [SerializeField]
+    [Range(1, 100)]
+    public int _spawnRange;
 
     [SerializeField]
     private AudioClip _powerUpAudio;
@@ -50,6 +55,9 @@ public class Powerup : MonoBehaviour
                         break;
                     case 4:
                         player.Heal();
+                        break;
+                    case 5:
+                        player.MissileActive();
                         break;
                     default:
                         Debug.Log("No powerup selected!");

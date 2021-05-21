@@ -19,6 +19,8 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private AudioClip _explosionAudio;
 
+    public bool _isDestroyed = false;
+
     private void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player>();
@@ -69,10 +71,7 @@ public class Enemy : MonoBehaviour
             if (player != null)
             {
                 player.Damage();
-                _anim.SetTrigger("OnEnemyDeath");
-                _speed = 0;
-                AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0, 0, -10), 1f);
-                Destroy(this.gameObject, 2.37f);
+                OnDeath();
             }
         }
 
@@ -83,13 +82,28 @@ public class Enemy : MonoBehaviour
             if (player != null)
                 player.AddScore();
 
-            _anim.SetTrigger("OnEnemyDeath");
-            _speed = 0;
+            OnDeath();
 
-            AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0,0,-10), 1f);
-
-            Destroy(GetComponent<Collider2D>());
-            Destroy(this.gameObject, 2.37f);
+            
         }
+
+        if (collision.CompareTag("Missile"))
+        {
+
+            Destroy(collision.gameObject);
+            OnDeath();
+            
+        }
+    }
+
+    public void OnDeath()
+    {
+        _isDestroyed = true;
+        _anim.SetTrigger("OnEnemyDeath");
+        _speed = 0;
+
+        AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0, 0, -10), 1f);
+        Destroy(GetComponent<Collider2D>());
+        Destroy(this.gameObject, 2.37f);
     }
 }

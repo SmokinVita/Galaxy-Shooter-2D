@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 3.5f;
     [SerializeField]
+    private float _speedBoost = 3f;
+    [SerializeField]
     private int _score;
     [SerializeField]
     private GameObject _rightEngine;
@@ -38,6 +40,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _tripleShot;
     [SerializeField]
+    private GameObject _missileShot;
+    [SerializeField]
     private float _powerDown = 5f;
     [SerializeField]
     private float _speedMultipler = 2f;
@@ -50,8 +54,8 @@ public class Player : MonoBehaviour
 
     private Renderer _shieldRenderer;
 
-    private bool _isSpeedBoostActive = false;
     private bool _isTripleShotActive = false;
+    private bool _isMissileShotActive = false;
     private bool _isShieldActive = false;
 
     [Header("Audio")]
@@ -101,24 +105,25 @@ public class Player : MonoBehaviour
         if (_ammo > 0)
         {
             _canLaserFire = false;
-            //if ammo is greater than 0 canLaserFire is true
-            //fire take away ammo
-            //display on screen
-            //else if 
-            //flash warning need to reload
 
             Vector3 offset = new Vector3(0, 1.14f, 0);
 
             if (_isTripleShotActive)
             {
                 Instantiate(_tripleShot, transform.position + offset, Quaternion.identity);
+                _ammo--;
+            }
+            else if(_isMissileShotActive)
+            {
+                Instantiate(_missileShot, transform.position + offset, Quaternion.identity);
             }
             else
             {
                 Instantiate(_laserPrefab, transform.position + offset, Quaternion.identity);
+                _ammo--;
             }
 
-            _ammo--;
+
             _uiManager.Ammo(_ammo);
 
             StartCoroutine(LaserCoolDown());
@@ -146,11 +151,12 @@ public class Player : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-        //while left shift is down increase speed while fuel
+        //while left shift is down increase speed
         if (Input.GetKey(KeyCode.LeftShift))
-            transform.Translate(direction * (_speed * 3) * Time.deltaTime);
+            transform.Translate(direction * (_speed * _speedBoost) * Time.deltaTime);
         else
             transform.Translate(direction * _speed * Time.deltaTime);
+
 
         if (transform.position.y >= 0)
             transform.position = new Vector3(transform.position.x, 0, 0);
@@ -186,7 +192,7 @@ public class Player : MonoBehaviour
             if (_currentShieldStrength > 0)
             {
                 _currentShieldStrength--;
-                ShieldDisplayStrength(_currentShieldStrength);
+                ShieldDisplayStrength();
                 return;
             }
             else
@@ -237,6 +243,18 @@ public class Player : MonoBehaviour
         _isTripleShotActive = false;
     }
 
+    public void MissileActive()
+    {
+        _isMissileShotActive = true;
+        StartCoroutine(MissileShotPowerDownRoutine());
+    }
+
+    private IEnumerator MissileShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _isMissileShotActive = false;
+    }
+
     public void SpeedBoostActivate()
     {
         _speed *= _speedMultipler;
@@ -260,14 +278,13 @@ public class Player : MonoBehaviour
             _isShieldActive = true;
             _shield.SetActive(true);
             _currentShieldStrength++;
-            ShieldDisplayStrength(_currentShieldStrength);
+            ShieldDisplayStrength();
         }
     }
 
-    private void ShieldDisplayStrength(int strength)
+    private void ShieldDisplayStrength()
     {
-
-        switch (strength)
+        switch (_currentShieldStrength)
         {
             case 1:
                 _shieldRenderer.material.color = new Color(1, 1, 1, .25f);
