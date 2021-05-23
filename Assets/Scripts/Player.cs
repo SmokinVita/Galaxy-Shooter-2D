@@ -193,7 +193,7 @@ public class Player : MonoBehaviour
             {
                 _currentShieldStrength--;
                 ShieldDisplayStrength();
-                return;
+                return; //jumps out of method to now damage player
             }
             else
             {
@@ -294,6 +294,9 @@ public class Player : MonoBehaviour
                 break;
             case 3:
                 _shieldRenderer.material.color = new Color(1, 1, 1, 1);
+                break;
+            default:
+                _shieldRenderer.gameObject.SetActive(false);
                 break;
         }
     }
