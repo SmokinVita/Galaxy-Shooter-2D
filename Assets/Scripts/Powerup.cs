@@ -32,8 +32,6 @@ public class Powerup : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             
-            
-
             Player player = collision.GetComponent<Player>();
             if (player != null)
             {

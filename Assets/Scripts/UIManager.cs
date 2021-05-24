@@ -24,6 +24,9 @@ public class UIManager : MonoBehaviour
     private float _flickerTimer;
 
     [SerializeField]
+    private Image _heatGauge;
+
+    [SerializeField]
     private GameManager _gameManager;
 
     private void Start()
@@ -78,6 +81,21 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(_flickerTimer);
             _gameOverText.gameObject.SetActive(true);
             _gameResetText.gameObject.SetActive(true);
+        }
+    }
+
+    public void ThrustTempGauge(float currentTemp, bool _isEngineOverHeated)
+    {
+
+        _heatGauge.fillAmount = currentTemp;
+       
+
+        if (_isEngineOverHeated)
+        {
+            _heatGauge.color = Color.red;
+        }else
+        {
+            _heatGauge.color = Color.Lerp(Color.green, Color.red, currentTemp);
         }
     }
 }

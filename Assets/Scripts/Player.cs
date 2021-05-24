@@ -22,6 +22,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _explosionPrefab;
 
+    [Header("Thruster Info")]
+    [SerializeField]
+    private float _maxTemp = 5f;
+    [SerializeField]
+    private float _currentEngineTemp;
+    [SerializeField]
+    private bool _isEngineOverHeated = false;
+    
+
     [Header("Laser Info")]
     [SerializeField]
     private GameObject _laserPrefab;
@@ -86,6 +95,7 @@ public class Player : MonoBehaviour
         if (_audioSource == null)
             Debug.LogError("Audio Source is NULL!");
 
+
         _uiManager.Ammo(_ammo);
         _rightEngine.SetActive(false);
         _leftEngine.SetActive(false);
@@ -113,7 +123,7 @@ public class Player : MonoBehaviour
                 Instantiate(_tripleShot, transform.position + offset, Quaternion.identity);
                 _ammo--;
             }
-            else if(_isMissileShotActive)
+            else if (_isMissileShotActive)
             {
                 Instantiate(_missileShot, transform.position + offset, Quaternion.identity);
             }
@@ -152,10 +162,28 @@ public class Player : MonoBehaviour
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
         //while left shift is down increase speed
-        if (Input.GetKey(KeyCode.LeftShift))
+        //while holding shift decrease fuel every 2 seconds. 
+        //When shift is let go 
+        if (Input.GetKey(KeyCode.LeftShift) && !_isEngineOverHeated)
+        {
             transform.Translate(direction * (_speed * _speedBoost) * Time.deltaTime);
+            _currentEngineTemp += Time.deltaTime;
+
+            if (_currentEngineTemp >= _maxTemp)
+            {
+                _isEngineOverHeated = true;
+                StartCoroutine(EngineCoolDownRoutine());
+            }
+        }
         else
+        {
             transform.Translate(direction * _speed * Time.deltaTime);
+            if (_currentEngineTemp > 0 && !_isEngineOverHeated)
+                _currentEngineTemp -= Time.deltaTime;
+        }
+
+        
+        _uiManager.ThrustTempGauge(_currentEngineTemp/_maxTemp, _isEngineOverHeated);
 
 
         if (transform.position.y >= 0)
@@ -167,6 +195,18 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(-11.28f, transform.position.y, 0);
         else if (transform.position.x <= -11.28f)
             transform.position = new Vector3(11.28f, transform.position.y, 0);
+    }
+
+    private IEnumerator EngineCoolDownRoutine()
+    {
+        while (_isEngineOverHeated)
+        {
+            yield return new WaitForSeconds(1f);
+            _currentEngineTemp -=.5f;
+            if (_currentEngineTemp <= 0)
+                _isEngineOverHeated = false;
+        }
+
     }
 
     public void Heal()
@@ -221,14 +261,14 @@ public class Player : MonoBehaviour
         }
     }
 
+
     public void RefillAmmo()
     {
-        if (_ammo != 15)
+        if (_ammo != _maxAmmo)
         {
             _ammo = _maxAmmo;
             _uiManager.Ammo(_ammo);
         }
-
     }
 
     public void TripleShotActivate()
