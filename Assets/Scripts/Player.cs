@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
+    private CameraShake _shakeCamera;
 
     [Header("Power Ups")]
     [SerializeField]
@@ -94,6 +95,10 @@ public class Player : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
             Debug.LogError("Audio Source is NULL!");
+
+        _shakeCamera = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        if (_shakeCamera == null)
+            Debug.LogError("Camera Shake is NULL!");
 
 
         _uiManager.Ammo(_ammo);
@@ -242,6 +247,7 @@ public class Player : MonoBehaviour
             }
         }
 
+        _shakeCamera.ShakeCamera();
         _lives--;
         _uiManager.SetLivesSprite(_lives);
 
