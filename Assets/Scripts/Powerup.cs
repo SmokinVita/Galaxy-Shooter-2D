@@ -11,9 +11,6 @@ public class Powerup : MonoBehaviour
     private int _powerupID;
     [SerializeField]
     public int _spawnWeight;
-    [SerializeField]
-    [Range(1, 100)]
-    public int _spawnRange;
 
     [SerializeField]
     private AudioClip _powerUpAudio;
@@ -56,6 +53,9 @@ public class Powerup : MonoBehaviour
                         break;
                     case 5:
                         player.MissileActive();
+                        break;
+                    case 6:
+                        player.NegitivePowerup();
                         break;
                     default:
                         Debug.Log("No powerup selected!");

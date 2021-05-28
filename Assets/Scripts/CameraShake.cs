@@ -19,7 +19,6 @@ public class CameraShake : MonoBehaviour
         _currentShakeDuration = _shakeDuration;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_isShakeCameraTime)

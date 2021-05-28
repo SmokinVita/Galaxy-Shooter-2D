@@ -15,6 +15,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerups;
     private GameObject _selectedPowerup;
 
+    private int _totalWeight = 0;
 
     private bool _stopSpawning = false; 
 
@@ -22,6 +23,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
+        TotalWeightAmount();
     }
 
     IEnumerator SpawnEnemyRoutine()
@@ -38,16 +40,17 @@ public class SpawnManager : MonoBehaviour
         }
     }
     
-    private void PickPowerupToSpawn()
+    private void TotalWeightAmount()
     {
-
-        int totalWeight = 0;
         for (int i = 0; i < _powerups.Length; i++)
         {
-            totalWeight += _powerups[i].GetComponent<Powerup>()._spawnWeight;
+            _totalWeight += _powerups[i].GetComponent<Powerup>()._spawnWeight;
         }
+    }
 
-        int randomNumber = UnityEngine.Random.Range(0, totalWeight);
+    private void PickPowerupToSpawn()
+    {
+        int randomNumber = UnityEngine.Random.Range(0, _totalWeight);
 
         foreach (GameObject powerup in _powerups)
         {
@@ -59,12 +62,10 @@ public class SpawnManager : MonoBehaviour
             }
             randomNumber -= powerupWeight;
         }
-
     }
 
     IEnumerator SpawnPowerupRoutine()
     {
-
         yield return new WaitForSeconds(3.0f);
 
         while (_stopSpawning == false)

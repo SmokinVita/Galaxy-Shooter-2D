@@ -68,6 +68,9 @@ public class Player : MonoBehaviour
     private bool _isMissileShotActive = false;
     private bool _isShieldActive = false;
 
+    private Vector3 _scaleUP = new Vector3(1,1,1);
+    private Vector3 _originalScale;
+
     [Header("Audio")]
     [SerializeField]
     private AudioClip _laserShotAudio;
@@ -78,6 +81,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+        _originalScale = transform.localScale;
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
@@ -101,7 +105,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Camera Shake is NULL!");
 
 
-        _uiManager.Ammo(_ammo);
+        _uiManager.Ammo(_ammo, _maxAmmo);
         _rightEngine.SetActive(false);
         _leftEngine.SetActive(false);
     }
@@ -139,7 +143,7 @@ public class Player : MonoBehaviour
             }
 
 
-            _uiManager.Ammo(_ammo);
+            _uiManager.Ammo(_ammo, _maxAmmo);
 
             StartCoroutine(LaserCoolDown());
 
@@ -148,7 +152,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            _uiManager.Ammo(_ammo);
+            _uiManager.Ammo(_ammo, _maxAmmo);
         }
     }
 
@@ -166,9 +170,6 @@ public class Player : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-        //while left shift is down increase speed
-        //while holding shift decrease fuel every 2 seconds. 
-        //When shift is let go 
         if (Input.GetKey(KeyCode.LeftShift) && !_isEngineOverHeated)
         {
             transform.Translate(direction * (_speed * _speedBoost) * Time.deltaTime);
@@ -211,7 +212,6 @@ public class Player : MonoBehaviour
             if (_currentEngineTemp <= 0)
                 _isEngineOverHeated = false;
         }
-
     }
 
     public void Heal()
@@ -273,7 +273,7 @@ public class Player : MonoBehaviour
         if (_ammo != _maxAmmo)
         {
             _ammo = _maxAmmo;
-            _uiManager.Ammo(_ammo);
+            _uiManager.Ammo(_ammo, _maxAmmo);
         }
     }
 
@@ -351,5 +351,17 @@ public class Player : MonoBehaviour
     {
         _score += 10;
         _uiManager.SetScoreText(_score);
+    }
+
+    public void NegitivePowerup()
+    {
+        transform.localScale = _scaleUP;
+        StartCoroutine(ScaleDownRoutine());
+    }
+
+    private IEnumerator ScaleDownRoutine()
+    {
+        yield return new WaitForSeconds(_powerDown);
+        transform.localScale = _originalScale;
     }
 }

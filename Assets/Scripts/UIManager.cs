@@ -53,9 +53,9 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void Ammo(int currentAmmo)
+    public void Ammo(int currentAmmo, int maxAmmo)
     {
-        _ammoText.text = $"Ammo: {currentAmmo}";
+        _ammoText.text = $"Ammo: {currentAmmo} / {maxAmmo}";
 
         if (currentAmmo <= 0)
             _outOfAmmoText.gameObject.SetActive(true);
