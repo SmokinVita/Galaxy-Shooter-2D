@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Explosion.cs" />
+    <Compile Include="Assets\Scripts\CameraShake.cs" />
     <Compile Include="Assets\Scripts\Powerup.cs" />
     <Compile Include="Assets\Scripts\HeatSeekingMissile.cs" />
     <Compile Include="Assets\Scripts\SpawnManager.cs" />
@@ -64,10 +65,10 @@
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Main_Menu\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\ScatterBomb.cs" />
     <Compile Include="Assets\Scripts\Laser.cs" />
     <Compile Include="Assets\Scripts\Asteroid.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\CameraShake.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\GameDevHQ\FileBase\Plugin\Filebase.dll" />
@@ -647,6 +648,9 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -4,11 +4,24 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    private enum EnemyType { enemyDown, enemySideways, enemyZigZag }
+    [SerializeField]
+    private EnemyType _currentEnemyType;
+
 
     [SerializeField]
     private float _speed = 4f;
     [SerializeField]
     private GameObject _enemyLaserPrefab;
+    [SerializeField]
+    private GameObject _scatterBombPrefab;
+
+    [SerializeField]
+    private Transform[] _wayPointsToFollow;
+    [SerializeField]
+    private GameObject _wayPointPrefab;
+    private int _currentWayPoint = 0;
+    private GameObject _wayPoint;
 
     private float _fireRate = 3f;
     private float _canfire = -1;
@@ -30,41 +43,97 @@ public class Enemy : MonoBehaviour
         _anim = GetComponent<Animator>();
         if (_anim == null)
             Debug.LogError("The Enemy Animator is Null!");
+
+        if (_currentEnemyType == EnemyType.enemyZigZag)
+        {
+            _wayPoint = Instantiate(_wayPointPrefab, transform.position, Quaternion.identity);
+
+            _wayPointsToFollow = new Transform[_wayPoint.transform.childCount];
+            for (int i = 0; i < _wayPoint.transform.childCount; i++)
+            {
+                _wayPointsToFollow[i] = _wayPoint.transform.GetChild(i);
+            }
+        }
+
     }
 
     void Update()
     {
         CalculateMovement();
 
+        Firing();
+
+    }
+
+    private void Firing()
+    {
         //every 3-7 seconds fire lasers
         if (Time.time > _canfire && !_isDestroyed)
         {
             _fireRate = Random.Range(3f, 7f);
             _canfire = Time.time + _fireRate;
-            GameObject enemyLaser = Instantiate(_enemyLaserPrefab, transform.position + new Vector3(0, -1.386f, 0), Quaternion.identity);
-            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
-
-            for (int i = 0; i < lasers.Length; i++)
+            if (_currentEnemyType == EnemyType.enemyDown)
             {
-                lasers[i].AssignEnemyLaser();
+
+                GameObject enemyLaser = Instantiate(_enemyLaserPrefab, transform.position + new Vector3(0, -1.386f, 0), Quaternion.identity);
+                Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+
+                for (int i = 0; i < lasers.Length; i++)
+                {
+                    lasers[i].AssignEnemyLaser();
+                }
+            }
+            else if (_currentEnemyType == EnemyType.enemyZigZag)
+            {
+                for (int fireAngle = 0; fireAngle < 360; fireAngle += 30)
+                {
+                    var newBullet = Instantiate(_scatterBombPrefab, transform.position, Quaternion.identity);
+                    newBullet.transform.eulerAngles = Vector3.forward * fireAngle;
+                }
             }
         }
-
     }
 
     private void CalculateMovement()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        if (_currentEnemyType == EnemyType.enemyDown)
+        {
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        }
+        else if (_currentEnemyType == EnemyType.enemyZigZag)
+        {
+            //while coming down move in a zig zag movement. 
+            //take the currentwaypoint movetoward it, once at waypoint move to next waypoint
+            var direction = _wayPointsToFollow[_currentWayPoint].position - transform.position;
+            transform.localRotation = Quaternion.LookRotation(Vector3.forward, -direction);
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        }
 
         if (transform.position.y <= -5.6f)
         {
-            float newXPos = Random.Range(-9f, 9f);
-            transform.position = new Vector3(newXPos, 7.8f, 0);
+            RespawnTopOfScreen();
         }
+    }
+
+    private void RespawnTopOfScreen()
+    {
+        float newXPos = Random.Range(-9f, 9f);
+        transform.position = new Vector3(newXPos, 7.8f, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
+        if (collision.CompareTag("Waypoint"))
+        {
+            _currentWayPoint += 1;
+            if (_currentWayPoint >= _wayPointsToFollow.Length)
+            {
+                _currentWayPoint = 0;
+                RespawnTopOfScreen();
+                collision.gameObject.transform.parent.position = gameObject.transform.position;
+            }
+        }
 
         if (collision.CompareTag("Player"))
         {
@@ -79,7 +148,6 @@ public class Enemy : MonoBehaviour
         {
             Destroy(collision.gameObject);
 
-
         }
 
         if (collision.CompareTag("Missile"))
@@ -92,19 +160,20 @@ public class Enemy : MonoBehaviour
     }
 
     public void OnDeath()
-    {            
-        
+    {
+
         if (player != null)
             player.AddScore();
 
         _isDestroyed = true;
         Destroy(GetComponent<Collider2D>());
-        
+
         _anim.SetTrigger("OnEnemyDeath");
         _speed = 0;
 
         AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0, 0, -10), 1f);
-        
+
         Destroy(this.gameObject, 2.37f);
+        Destroy(_wayPoint, 2.37f);
     }
 }
