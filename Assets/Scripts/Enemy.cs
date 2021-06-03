@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private enum EnemyType { enemyDown, enemySideways, enemyZigZag }
     [SerializeField]
-    private EnemyType _currentEnemyType;
+    private int _enemyID;
+    //0 = basic enemy
+    //1 = basic enemy with new movement type
+    //2 = enemy is zigzag movement and new wep.
 
 
     [SerializeField]
@@ -44,7 +46,7 @@ public class Enemy : MonoBehaviour
         if (_anim == null)
             Debug.LogError("The Enemy Animator is Null!");
 
-        if (_currentEnemyType == EnemyType.enemyZigZag)
+        if (_enemyID == 2)
         {
             _wayPoint = Instantiate(_wayPointPrefab, transform.position, Quaternion.identity);
 
@@ -62,7 +64,6 @@ public class Enemy : MonoBehaviour
         CalculateMovement();
 
         Firing();
-
     }
 
     private void Firing()
@@ -72,7 +73,7 @@ public class Enemy : MonoBehaviour
         {
             _fireRate = Random.Range(3f, 7f);
             _canfire = Time.time + _fireRate;
-            if (_currentEnemyType == EnemyType.enemyDown)
+            if (_enemyID == 0)
             {
 
                 GameObject enemyLaser = Instantiate(_enemyLaserPrefab, transform.position + new Vector3(0, -1.386f, 0), Quaternion.identity);
@@ -83,7 +84,7 @@ public class Enemy : MonoBehaviour
                     lasers[i].AssignEnemyLaser();
                 }
             }
-            else if (_currentEnemyType == EnemyType.enemyZigZag)
+            else if (_enemyID == 2)
             {
                 for (int fireAngle = 0; fireAngle < 360; fireAngle += 30)
                 {
@@ -96,14 +97,12 @@ public class Enemy : MonoBehaviour
 
     private void CalculateMovement()
     {
-        if (_currentEnemyType == EnemyType.enemyDown)
+        if (_enemyID == 0)
         {
             transform.Translate(Vector3.down * _speed * Time.deltaTime);
         }
-        else if (_currentEnemyType == EnemyType.enemyZigZag)
+        else if (_enemyID == 2)
         {
-            //while coming down move in a zig zag movement. 
-            //take the currentwaypoint movetoward it, once at waypoint move to next waypoint
             var direction = _wayPointsToFollow[_currentWayPoint].position - transform.position;
             transform.localRotation = Quaternion.LookRotation(Vector3.forward, -direction);
             transform.Translate(Vector3.down * _speed * Time.deltaTime);

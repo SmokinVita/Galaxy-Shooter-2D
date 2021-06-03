@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5152100824c9e404bad647e727b14c47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentEnemyType: 2
+  _enemyID: 2
   _speed: 2
   _enemyLaserPrefab: {fileID: 6422930831314460430, guid: 9d73b90dcc122c1468b67cb46808250f, type: 3}
   _scatterBombPrefab: {fileID: 3664548497747573600, guid: 317d0a045afda054b893a9c16b1dcb10, type: 3}
