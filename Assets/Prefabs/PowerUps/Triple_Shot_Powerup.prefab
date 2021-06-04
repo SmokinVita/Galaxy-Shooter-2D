@@ -100,8 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   _powerupID: 0
-  _spawnWeight: 50
-  _spawnRange: 0
+  _spawnWeight: 60
   _powerUpAudio: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!58 &9017103731682917434
 CircleCollider2D:

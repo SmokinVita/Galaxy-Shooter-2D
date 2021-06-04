@@ -10,8 +10,6 @@ public class ScatterBomb : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Once spawn wait about 1 sec and than explode with mulitple bullets 
-        // expand in the form of a circle.
         transform.Translate(Vector3.up * _speed * Time.deltaTime);
 
         if (transform.position.y > 7.8f || transform.position.y < -5.6f || transform.position.x < -11.28f || transform.position.x > 11.28f)

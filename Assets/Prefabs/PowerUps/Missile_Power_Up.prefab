@@ -100,8 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   _powerupID: 5
-  _spawnWeight: 30
-  _spawnRange: 0
+  _spawnWeight: 20
   _powerUpAudio: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!61 &2623635724245955166
 BoxCollider2D:

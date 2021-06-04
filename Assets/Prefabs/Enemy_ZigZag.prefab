@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8662043290334785591}
-  - component: {fileID: 823210171695066679}
+  - component: {fileID: 1222619766590399709}
   - component: {fileID: 2609752026719044671}
   - component: {fileID: 5630727021487482828}
   - component: {fileID: 9096593404196229088}
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &823210171695066679
+--- !u!114 &1222619766590399709
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,16 +44,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8662043290334785579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5152100824c9e404bad647e727b14c47, type: 3}
+  m_Script: {fileID: 11500000, guid: a2b64c18591a44b42a934b2c51543b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyID: 2
-  _speed: 2
-  _enemyLaserPrefab: {fileID: 6422930831314460430, guid: 9d73b90dcc122c1468b67cb46808250f, type: 3}
-  _scatterBombPrefab: {fileID: 3664548497747573600, guid: 317d0a045afda054b893a9c16b1dcb10, type: 3}
+  _speed: 2.5
+  _enemyAmmoPrefab: {fileID: 3664548497747573600, guid: 317d0a045afda054b893a9c16b1dcb10, type: 3}
+  _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _wayPointsToFollow: []
   _wayPointPrefab: {fileID: 2528583089760630652, guid: 95d5ce157eb4b25439bf4922d000c995, type: 3}
-  _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
 --- !u!212 &2609752026719044671
 SpriteRenderer:
   m_ObjectHideFlags: 0
