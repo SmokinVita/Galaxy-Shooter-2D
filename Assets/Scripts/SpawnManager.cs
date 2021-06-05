@@ -7,7 +7,8 @@ public class SpawnManager : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject _enemyPrefab;
+    private GameObject[] _enemyPrefab;
+    private GameObject _selectedEnemy;
     [SerializeField]
     private GameObject _enemyContainer;
 
@@ -15,15 +16,42 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerups;
     private GameObject _selectedPowerup;
 
-    private int _totalWeight = 0;
+    private int _totalPowerupWeight = 0;
+    private int _totalEnemyWeight = 0;
 
     private bool _stopSpawning = false; 
 
     public void StartSpawning()
     {
         StartCoroutine(SpawnEnemyRoutine());
+        TotalEnemyWeightAmount();
+
         StartCoroutine(SpawnPowerupRoutine());
-        TotalWeightAmount();
+        TotalPowerupWeightAmount();
+    }
+
+    private void TotalEnemyWeightAmount()
+    {
+        for (int i = 0; i < _enemyPrefab.Length; i++)
+        {
+            _totalEnemyWeight += _enemyPrefab[i].GetComponent<Enemy>()._enemyWeight;
+        }
+    }
+
+    private void PickEnemyToSpawn()
+    {
+        int randomNumber = UnityEngine.Random.Range(0, _totalEnemyWeight);
+
+        foreach (var enemy in _enemyPrefab)
+        {
+            int enemyWeight = enemy.GetComponent<Enemy>()._enemyWeight;
+            if(randomNumber <= enemyWeight)
+            {
+                _selectedEnemy = enemy;
+                break;
+            }
+            randomNumber -= enemyWeight;
+        }
     }
 
     IEnumerator SpawnEnemyRoutine()
@@ -34,23 +62,24 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 spawnArea = new Vector3(UnityEngine.Random.Range(-9, 9), 7, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, spawnArea, transform.rotation);
+            PickEnemyToSpawn();
+            GameObject newEnemy = Instantiate(_selectedEnemy, spawnArea, transform.rotation);
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(5.0f);
         }
     }
     
-    private void TotalWeightAmount()
+    private void TotalPowerupWeightAmount()
     {
         for (int i = 0; i < _powerups.Length; i++)
         {
-            _totalWeight += _powerups[i].GetComponent<Powerup>()._spawnWeight;
+            _totalPowerupWeight += _powerups[i].GetComponent<Powerup>()._spawnWeight;
         }
     }
 
     private void PickPowerupToSpawn()
     {
-        int randomNumber = UnityEngine.Random.Range(0, _totalWeight);
+        int randomNumber = UnityEngine.Random.Range(0, _totalPowerupWeight);
 
         foreach (GameObject powerup in _powerups)
         {

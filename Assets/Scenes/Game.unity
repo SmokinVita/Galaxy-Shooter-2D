@@ -1753,7 +1753,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d191bb07abeb769429985f94b173c2f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab: {fileID: 8662043290334785579, guid: 13aa3adea0154954482ad2343b1eb12a, type: 3}
+  _enemyPrefab:
+  - {fileID: 267745699070403637, guid: 1569f26a056065946b733e6765fc24a3, type: 3}
+  - {fileID: 8662043290334785579, guid: 13aa3adea0154954482ad2343b1eb12a, type: 3}
   _enemyContainer: {fileID: 945463423}
   _powerups:
   - {fileID: 9017103731682917429, guid: 4f3af71b2693e374ab34fa5a3dd43f5b, type: 3}

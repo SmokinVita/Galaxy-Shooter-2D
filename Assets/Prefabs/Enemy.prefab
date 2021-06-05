@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5152100824c9e404bad647e727b14c47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyWeight: 80
   _speed: 2.5
   _enemyAmmoPrefab: {fileID: 6422930831314460430, guid: 9d73b90dcc122c1468b67cb46808250f, type: 3}
   _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
