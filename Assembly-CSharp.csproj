@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\HeatSeekingMissile.cs" />
     <Compile Include="Assets\Scripts\SpawnManager.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Enemies\ZigZagType.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Main_Menu\MainMenu.cs" />
@@ -69,7 +70,7 @@
     <Compile Include="Assets\Scripts\Laser.cs" />
     <Compile Include="Assets\Scripts\Asteroid.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\Enemies\ZigZagType.cs" />
+    <Compile Include="Assets\Scripts\Enemies\SmartType.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\GameDevHQ\FileBase\Plugin\Filebase.dll" />

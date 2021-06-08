@@ -14,13 +14,12 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     protected GameObject _enemyShield;
-    [SerializeField]
     protected bool _enemyShieldActive = false;
 
     protected float _fireRate = 3f;
     protected float _canfire = -1;
 
-    private Player player;
+    protected Player player;
     private Animator _anim;
 
     [SerializeField]
