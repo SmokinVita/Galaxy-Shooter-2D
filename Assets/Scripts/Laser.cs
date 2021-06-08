@@ -73,7 +73,8 @@ public class Laser : MonoBehaviour
                 Enemy enemy = collision.GetComponent<Enemy>();
                 if(enemy !=null)
                 {
-                    enemy.OnDeath();
+                    enemy.OnHit();
+                    Destroy(gameObject);
                 }
             }
         }

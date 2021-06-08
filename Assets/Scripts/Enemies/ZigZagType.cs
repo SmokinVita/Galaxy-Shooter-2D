@@ -12,7 +12,6 @@ public class ZigZagType : Enemy
     private int _currentWayPoint = 0;
     private GameObject _wayPoint;
 
-
     protected override void Start()
     {
         base.Start();
@@ -62,9 +61,14 @@ public class ZigZagType : Enemy
         }
     }
 
-    public override void OnDeath()
+    public override void OnHit()
     {
-        base.OnDeath();
-        Destroy(_wayPoint, 2.37f);
+        if (_enemyShieldActive == false)
+        {
+            Debug.Log("This was called to soon?");
+            Destroy(_wayPoint, 2.37f);
+        }
+        
+        base.OnHit();
     }
 }

@@ -12,6 +12,11 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected GameObject _enemyAmmoPrefab;
 
+    [SerializeField]
+    protected GameObject _enemyShield;
+    [SerializeField]
+    protected bool _enemyShieldActive = false;
+
     protected float _fireRate = 3f;
     protected float _canfire = -1;
 
@@ -32,6 +37,8 @@ public class Enemy : MonoBehaviour
         _anim = GetComponent<Animator>();
         if (_anim == null)
             Debug.LogError("The Enemy Animator is Null!");
+
+        EnableShield();
     }
 
     void Update()
@@ -39,6 +46,16 @@ public class Enemy : MonoBehaviour
         CalculateMovement();
 
         Firing();
+    }
+
+    private void EnableShield()
+    {
+        int randomPick = Random.Range(0, 6);
+        if (randomPick <= 1)
+        {
+            _enemyShield.SetActive(true);
+            _enemyShieldActive = true;
+        }
     }
 
     protected virtual void Firing()
@@ -82,36 +99,45 @@ public class Enemy : MonoBehaviour
             if (player != null)
             {
                 player.Damage();
-                OnDeath();
+                OnHit();
             }
         }
 
-        if (collision.CompareTag("Laser"))
+        /*if (collision.CompareTag("Laser"))
         {
             Destroy(collision.gameObject);
-            //onDeath is called from laser script
-        }
+            //onHit is called from laser script
+        }*/
 
         if (collision.CompareTag("Missile"))
         {
             Destroy(collision.gameObject);
-            OnDeath();
+            OnHit();
         }
     }
 
-    public virtual void OnDeath()
+    public virtual void OnHit()
     {
-        if (player != null)
-            player.AddScore();
+        if (!_enemyShieldActive)
+        {
+            if (player != null)
+                player.AddScore();
 
-        _isDestroyed = true;
-        Destroy(GetComponent<Collider2D>());
+            _isDestroyed = true;
+            Destroy(GetComponent<Collider2D>());
 
-        _anim.SetTrigger("OnEnemyDeath");
-        _speed = 0;
+            _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
 
-        AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0, 0, -10), 1f);
+            AudioSource.PlayClipAtPoint(_explosionAudio, transform.position + new Vector3(0, 0, -10), 1f);
 
-        Destroy(this.gameObject, 2.37f);
+            Destroy(this.gameObject, 2.37f);
+        }
+        else if(_enemyShieldActive)
+        {
+            Debug.Log("Enemy shield is not deactivated");
+            _enemyShieldActive = false;
+            _enemyShield.SetActive(false);
+        }
     }
 }

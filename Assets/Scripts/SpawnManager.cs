@@ -9,6 +9,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _enemyPrefab;
     private GameObject _selectedEnemy;
+    private int _totalEnemyWeight = 0;
+
     [SerializeField]
     private GameObject _enemyContainer;
 
@@ -17,7 +19,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject _selectedPowerup;
 
     private int _totalPowerupWeight = 0;
-    private int _totalEnemyWeight = 0;
+    
 
     private bool _stopSpawning = false; 
 
