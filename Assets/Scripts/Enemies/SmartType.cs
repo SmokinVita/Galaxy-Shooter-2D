@@ -4,29 +4,46 @@ using UnityEngine;
 
 public class SmartType : Enemy
 {
-    //Checks to see if player is above enemy, fire backwards
+
+    [SerializeField]
+    private GameObject _rayCastOrigin;
 
     protected override void Firing()
     {
-        if(transform.position.y < player.transform.position.y)
-        {
-            if (Time.time > _canfire && !_isDestroyed)
-            {
-                _fireRate = Random.Range(2f, 4f);
-                _canfire = Time.time + _fireRate;
 
-                GameObject enemyLaser = Instantiate(_enemyAmmoPrefab, transform.position + new Vector3(0, 3.26f, 0), Quaternion.identity);
-                Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
-                
-                for (int i = 0; i < lasers.Length; i++)
-                {
-                    lasers[i].AssignEnemyLaser();
-                    lasers[i].AssignFiringUpwards();
-                }
+        RaycastHit2D hit = Physics2D.Raycast(_rayCastOrigin.transform.position, Vector2.down, 2f);
+        Debug.DrawRay(_rayCastOrigin.transform.position, Vector2.down * 2f, Color.green);
+
+        if (hit.collider != null)
+        {
+            if (hit.collider.CompareTag("Powerup"))
+            {
+                _canfire = 1;
+            }
+        }
+
+        if (player != null)
+        {
+            if (transform.position.y < player.transform.position.y)
+            {
+                FireUptowardsPlayer();
             }
         }
 
         base.Firing();
     }
-    //if powerup is in front of enemy fire to destroy.
+
+    private void FireUptowardsPlayer()
+    {
+        if (Time.time > _canfire && !_isDestroyed)
+        {
+            _fireRate = Random.Range(2f, 4f);
+            _canfire = Time.time + _fireRate;
+
+            GameObject enemyLaser = Instantiate(_enemyAmmoPrefab, transform.position + new Vector3(0, 1.27f, 0), Quaternion.identity);
+            PowerupDestroyer powerupDestroyer = enemyLaser.GetComponent<PowerupDestroyer>();
+
+            powerupDestroyer.AssignFiringUpwards();
+        }
+    }
 }

@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
         EnableShield();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         CalculateMovement();
 
@@ -65,7 +65,7 @@ public class Enemy : MonoBehaviour
             _fireRate = Random.Range(3f, 7f);
             _canfire = Time.time + _fireRate;
 
-            GameObject enemyLaser = Instantiate(_enemyAmmoPrefab, transform.position + new Vector3(0, -.6f, 0), Quaternion.identity);
+            GameObject enemyLaser = Instantiate(_enemyAmmoPrefab, transform.position + new Vector3(0, -1.51f, 0), Quaternion.identity);
             Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
             for (int i = 0; i < lasers.Length; i++)
             {
@@ -134,7 +134,6 @@ public class Enemy : MonoBehaviour
         }
         else if(_enemyShieldActive)
         {
-            Debug.Log("Enemy shield is not deactivated");
             _enemyShieldActive = false;
             _enemyShield.SetActive(false);
         }

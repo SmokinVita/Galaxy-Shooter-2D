@@ -65,7 +65,6 @@ public class ZigZagType : Enemy
     {
         if (_enemyShieldActive == false)
         {
-            Debug.Log("This was called to soon?");
             Destroy(_wayPoint, 2.37f);
         }
         

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,9 +23,10 @@ public class UIManager : MonoBehaviour
     private Text _ammoText;
     [SerializeField]
     private float _flickerTimer;
-
     [SerializeField]
     private Image _heatGauge;
+    [SerializeField]
+    private Text _currentWave;
 
     [SerializeField]
     private GameManager _gameManager;
@@ -88,14 +90,37 @@ public class UIManager : MonoBehaviour
     {
 
         _heatGauge.fillAmount = currentTemp;
-       
+
 
         if (_isEngineOverHeated)
         {
             _heatGauge.color = Color.red;
-        }else
+        }
+        else
         {
             _heatGauge.color = Color.Lerp(Color.green, Color.red, currentTemp);
         }
+    }
+
+    public void StartOfWave(int currentWave)
+    {
+        _currentWave.gameObject.SetActive(true);
+        _currentWave.text = $"Wave {currentWave} Incoming!";
+
+        StartCoroutine(WaveRoutine());
+    }
+
+    public void BossIncoming()
+    {
+        _currentWave.gameObject.SetActive(true);
+        _currentWave.text = $"Boss Incoming!";
+
+        StartCoroutine(WaveRoutine());
+    }
+
+    private IEnumerator WaveRoutine()
+    {
+        yield return new WaitForSeconds(2f);
+        _currentWave.gameObject.SetActive(false);
     }
 }

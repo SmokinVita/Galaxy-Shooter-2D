@@ -7,6 +7,9 @@ public class SpawnManager : MonoBehaviour
 {
 
     [SerializeField]
+    private GameManager _gameManager;
+
+    [SerializeField]
     private GameObject[] _enemyPrefab;
     private GameObject _selectedEnemy;
     private int _totalEnemyWeight = 0;
@@ -20,17 +23,58 @@ public class SpawnManager : MonoBehaviour
 
     private int _totalPowerupWeight = 0;
     
+    private bool _stopSpawning = false;
 
-    private bool _stopSpawning = false; 
+    [SerializeField]
+    private int _maxWave = 3;
+    [SerializeField]
+    private int _currentWave;
 
-    public void StartSpawning()
+    [Tooltip("The amount of enemies inputed will be multiplied by the current wave.")]
+    [SerializeField]
+    private int _amountOfEnemies = 3;
+
+    [SerializeField]
+    private UIManager _uIManager;
+
+    void Start()
     {
-        StartCoroutine(SpawnEnemyRoutine());
         TotalEnemyWeightAmount();
-
-        StartCoroutine(SpawnPowerupRoutine());
         TotalPowerupWeightAmount();
     }
+    public void StartSpawning()
+    {
+        StartWave();
+        
+        StartCoroutine(SpawnPowerupRoutine());
+    }
+
+    public void StopSpawning()
+    {
+        StopAllCoroutines();
+    }
+
+    //Wave System 
+    // each wave has more enemies than last. 
+    //spawn in astroid when all enemies are over
+    //Give notification on what wave it is.
+    //When max wave is met, spawn Boss. 
+    private void StartWave()
+    {
+        if (_currentWave == _maxWave)
+        {
+            Debug.Log("Enter Boss!");
+            _uIManager.BossIncoming();
+        }
+        else
+        {
+            _currentWave++;
+            _uIManager.StartOfWave(_currentWave);
+            StartCoroutine(SpawnEnemyRoutine(_amountOfEnemies * _currentWave));
+        }
+        
+    }
+    
 
     private void TotalEnemyWeightAmount()
     {
@@ -56,19 +100,20 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnEnemyRoutine()
+    IEnumerator SpawnEnemyRoutine(int enemiesToSpawn)
     {
-
         yield return new WaitForSeconds(3.0f);
-
-        while (_stopSpawning == false)
+        
+        while (_stopSpawning == false && enemiesToSpawn > 0)
         {
             Vector3 spawnArea = new Vector3(UnityEngine.Random.Range(-9, 9), 7, 0);
             PickEnemyToSpawn();
             GameObject newEnemy = Instantiate(_selectedEnemy, spawnArea, transform.rotation);
             newEnemy.transform.parent = _enemyContainer.transform;
+            enemiesToSpawn--;
             yield return new WaitForSeconds(5.0f);
         }
+        _gameManager.StartCheckingForEnemies();
     }
     
     private void TotalPowerupWeightAmount()

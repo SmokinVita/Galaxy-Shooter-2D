@@ -8,11 +8,10 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _speed = 3.5f;
     private bool _isEnemy = false;
-    private bool _isFiringBackwards = false;
 
     void Update()
     {
-        if (_isEnemy == false || _isFiringBackwards == true)
+        if (_isEnemy == false)
         {
             MoveUp();
         }
@@ -53,10 +52,6 @@ public class Laser : MonoBehaviour
         _isEnemy = true;
     }
 
-    public void AssignFiringUpwards()
-    {
-        _isFiringBackwards = true;
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -70,6 +65,12 @@ public class Laser : MonoBehaviour
                     player.Damage();
                     Destroy(gameObject);
                 }
+            }
+            else if (collision.CompareTag("Powerup"))
+            {
+                Debug.Log($"{gameObject.name} hit powerup!");
+                Destroy(collision.gameObject);
+                Destroy(gameObject);
             }
         }
         else
