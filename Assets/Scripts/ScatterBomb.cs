@@ -25,6 +25,8 @@ public class ScatterBomb : MonoBehaviour
             {
                 player.Damage();
             }
+
+            Destroy(gameObject);
         }
     }
 }

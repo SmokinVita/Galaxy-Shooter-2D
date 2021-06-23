@@ -16,6 +16,7 @@ public class DodgeType : Enemy
                 PickDirection();
             }
         }
+
         base.CalculateMovement();
     }
 

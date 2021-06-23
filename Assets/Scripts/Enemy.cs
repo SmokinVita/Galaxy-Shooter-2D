@@ -27,8 +27,12 @@ public class Enemy : MonoBehaviour
 
     protected bool _isDestroyed = false;
 
+    private int randomSelect;
+
     protected virtual void Start()
     {
+        randomSelect = UnityEngine.Random.Range(0, 3);
+
         player = GameObject.Find("Player").GetComponent<Player>();
         if (player == null)
             Debug.LogError("Player is NULLl!");
@@ -76,7 +80,19 @@ public class Enemy : MonoBehaviour
 
     protected virtual void CalculateMovement()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        switch (randomSelect)
+        {
+            case 1:
+                transform.Translate(new Vector2(.5f, -1) * _speed * Time.deltaTime);
+                break;
+            case 2:
+                transform.Translate(new Vector2(-.5f, -1) * _speed * Time.deltaTime);
+                break;
+            default:
+                transform.Translate(Vector3.down * _speed * Time.deltaTime);
+                break;
+        }
+
 
         if (transform.position.y <= -5.6f)
         {
