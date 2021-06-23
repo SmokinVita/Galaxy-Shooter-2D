@@ -267,3 +267,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 260fdc69b0533324fb6bde3f22bf26b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyWeight: 45
+  _speed: 2.5
+  _enemyAmmoPrefab: {fileID: 6422930831314460430, guid: e35fbabd99895674796e018e9188130b, type: 3}
+  _enemyShield: {fileID: 338598827747095867}
+  _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  _radius: 0.5

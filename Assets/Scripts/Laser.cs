@@ -68,7 +68,6 @@ public class Laser : MonoBehaviour
             }
             else if (collision.CompareTag("Powerup"))
             {
-                Debug.Log($"{gameObject.name} hit powerup!");
                 Destroy(collision.gameObject);
                 Destroy(gameObject);
             }
