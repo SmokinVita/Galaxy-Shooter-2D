@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -27,11 +25,11 @@ public class Enemy : MonoBehaviour
 
     protected bool _isDestroyed = false;
 
-    private int randomSelect;
+    private int _randomMovementSelect;
 
     protected virtual void Start()
     {
-        randomSelect = UnityEngine.Random.Range(0, 3);
+        CalculateDirection();
 
         player = GameObject.Find("Player").GetComponent<Player>();
         if (player == null)
@@ -80,7 +78,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void CalculateMovement()
     {
-        switch (randomSelect)
+        switch (_randomMovementSelect)
         {
             case 1:
                 transform.Translate(new Vector2(.5f, -1) * _speed * Time.deltaTime);
@@ -100,6 +98,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void CalculateDirection()
+    {
+        _randomMovementSelect = Random.Range(0, 3);
+    }
+
     protected void RespawnTopOfScreen()
     {
         float newXPos = Random.Range(-9f, 9f);
@@ -117,12 +120,6 @@ public class Enemy : MonoBehaviour
                 OnHit();
             }
         }
-
-        /*if (collision.CompareTag("Laser"))
-        {
-            Destroy(collision.gameObject);
-            //onHit is called from laser script
-        }*/
 
         if (collision.CompareTag("Missile"))
         {

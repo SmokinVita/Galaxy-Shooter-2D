@@ -62,6 +62,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _maxShieldStrength = 3;
 
+    [Header("Magnet Info")]
+    [SerializeField]
+    private float _powerupSpeed;
+    [SerializeField]
+    private float _maxMagnetPower = 3f;
+    private float _currentMagnetPower;
+    private bool _canUseMagnet = true;
+
     private Renderer _shieldRenderer;
 
     private bool _isTripleShotActive = false;
@@ -77,11 +85,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _explosionAudio;
     private AudioSource _audioSource;
+    
 
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
         _originalScale = transform.localScale;
+        _currentMagnetPower = _maxMagnetPower;
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
@@ -117,6 +127,48 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && _canLaserFire)
             FireLaser();
 
+        if (Input.GetKey(KeyCode.C) && _canUseMagnet)
+        {
+            PullPowerups();
+        }
+
+        _uiManager.MagnetPowerGauge(_currentMagnetPower / _maxMagnetPower);
+    }
+
+    private void PullPowerups()
+    {
+
+        //while holding 'C' give player 3 seconds of magnet time. Once 3 seconds are up
+        //no longer able to use magnet 
+        _currentMagnetPower -= Time.deltaTime;
+
+        GameObject[] powerups = GameObject.FindGameObjectsWithTag("Powerup");
+
+        foreach (var powerup in powerups)
+        {
+            powerup.transform.position = Vector2.MoveTowards(powerup.transform.position, transform.position, _powerupSpeed * Time.deltaTime);
+        }
+
+        if(_currentMagnetPower < 0)
+        {
+            _canUseMagnet = false;
+            StartCoroutine(ReenergizeMagnetRoutine());
+        }
+    }
+
+    private IEnumerator ReenergizeMagnetRoutine()
+    {
+        
+        while (_canUseMagnet == false)
+        {
+            yield return new WaitForSeconds(.5f);
+            _currentMagnetPower += Time.deltaTime;
+            if (_currentMagnetPower >= _maxMagnetPower)
+            {
+                _canUseMagnet = true;
+               // _currentMagnetPower = _maxMagnetPower;
+            }
+        }
     }
 
     private void FireLaser()
@@ -266,7 +318,6 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 
     public void RefillAmmo()
     {

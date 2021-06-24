@@ -27,6 +27,8 @@ public class UIManager : MonoBehaviour
     private Image _heatGauge;
     [SerializeField]
     private Text _currentWave;
+    [SerializeField]
+    private Slider _magnetPowerGauge;
 
     [SerializeField]
     private GameManager _gameManager;
@@ -84,6 +86,11 @@ public class UIManager : MonoBehaviour
             _gameOverText.gameObject.SetActive(true);
             _gameResetText.gameObject.SetActive(true);
         }
+    }
+
+    public void MagnetPowerGauge(float currentMagnetPower)
+    {
+        _magnetPowerGauge.value = currentMagnetPower;
     }
 
     public void ThrustTempGauge(float currentTemp, bool _isEngineOverHeated)
