@@ -9,6 +9,7 @@ TagManager:
   - Missile
   - Waypoint
   - Powerup
+  - BossWaypoint
   layers:
   - Default
   - TransparentFX

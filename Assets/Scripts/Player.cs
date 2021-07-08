@@ -137,16 +137,14 @@ public class Player : MonoBehaviour
 
     private void PullPowerups()
     {
-
-        //while holding 'C' give player 3 seconds of magnet time. Once 3 seconds are up
-        //no longer able to use magnet 
         _currentMagnetPower -= Time.deltaTime;
 
         GameObject[] powerups = GameObject.FindGameObjectsWithTag("Powerup");
 
         foreach (var powerup in powerups)
         {
-            powerup.transform.position = Vector2.MoveTowards(powerup.transform.position, transform.position, _powerupSpeed * Time.deltaTime);
+            powerup.transform.position = Vector2.MoveTowards
+                (powerup.transform.position, transform.position, _powerupSpeed * Time.deltaTime);
         }
 
         if(_currentMagnetPower < 0)
@@ -158,7 +156,6 @@ public class Player : MonoBehaviour
 
     private IEnumerator ReenergizeMagnetRoutine()
     {
-        
         while (_canUseMagnet == false)
         {
             yield return new WaitForSeconds(.5f);
@@ -166,7 +163,6 @@ public class Player : MonoBehaviour
             if (_currentMagnetPower >= _maxMagnetPower)
             {
                 _canUseMagnet = true;
-               // _currentMagnetPower = _maxMagnetPower;
             }
         }
     }
