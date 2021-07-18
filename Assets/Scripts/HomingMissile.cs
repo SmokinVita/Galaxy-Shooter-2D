@@ -40,7 +40,6 @@ public class HomingMissile : MonoBehaviour
 
     void Update()
     {
-
         if (_selectedTarget == null)
         {
             FindEnemy();

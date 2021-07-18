@@ -1,132 +1,249 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Boss : MonoBehaviour
 {
+    public enum EnemyCurentState
+    {
+        Idle,
+        Moving,
+        Attacking,
+        LaserAttack,
+        Dead
+    }
 
-    //different states depending on Health.
-    //100% slow attacking, 50% quicker attack, 10% Enrage mode
-    //movement will follow waypoints. In Enrage mode randomly go to different waypoints.
-    //Regular enemy fire, Fire mines with scatterbomb, and Use of heat seaking missile.
+    [SerializeField]
+    private EnemyCurentState _currentState;
 
-    enum CurrentState { Calm, Angry, Enraged, Dead }
-    [SerializeField]
-    private CurrentState _currentState;
-
-    [SerializeField]
-    private GameObject _waypointContainer;
-    [SerializeField]
-    private Transform _startWaypoint;
-    [SerializeField]
-    private Transform[] _waypoints;
-    [SerializeField]
-    private int _currentWaypointTarget;
-    [SerializeField]
-    private float _speed = 2f;
+    private Animator anim;
 
     [SerializeField]
     private int _health = 100;
+    private bool _isRageMode = false;
 
-    private bool _isMovingToStartPos = true;
-
-    private bool _canMove = false;
     [SerializeField]
-    private float _wayPointStartTime = -1f;
+    private GameObject _enemyLaser;
     [SerializeField]
-    private float _wayPointCoolDownTime = 5f;
+    private Transform _rightTurrent;
+    [SerializeField]
+    private Transform _leftTurrent;
+    [SerializeField]
+    private GameObject _scatterBomb;
+    private bool canFire;
+    [SerializeField]
+    private float _turrentFireTime = 1.5f;
+    [SerializeField]
+    private float _scatterFireTime = 1f;
 
-    void Start()
+    [SerializeField]
+    private GameObject _explosion;
+
+    private bool _isIdle = false;
+    private bool _isInvincible = false;
+
+    [SerializeField]
+    private int _playerShipDmg = 2;
+    [SerializeField]
+    private int _laserDmg = 1;
+    [SerializeField]
+    private int _heatSeekingDmg = 10;
+    [SerializeField]
+    private int _homingMissileDmg = 20;
+
+    private void Start()
     {
-        _waypointContainer.SetActive(false);
+        anim = GetComponent<Animator>();
+        _currentState = EnemyCurentState.Idle;
     }
 
-    void Update()
+    private void Update()
     {
-        //CheckState();
 
-        if (_isMovingToStartPos == true)
+        if (_health <= 50)
         {
-            transform.position = Vector2.MoveTowards(transform.position, _startWaypoint.position, _speed * Time.deltaTime);
-            if (transform.position == _startWaypoint.position)
-            {
-                _isMovingToStartPos = false;
-            }
+            anim.SetBool("IsRageMode", true);
+            _isRageMode = true;
         }
 
-        switch (_currentState)
-        {
-            case CurrentState.Calm:
-                break;
-
-            case CurrentState.Angry:
-                if (Time.time > _wayPointStartTime)
-                {
-                    AngryMovement();
-                    if(transform.position == _startWaypoint.position)
-                    {
-                        _currentWaypointTarget += 1;
-                        _wayPointStartTime = Time.time + _wayPointCoolDownTime;
-                    }
-                }
-                break;
-
-            case CurrentState.Enraged:
-                _speed *= 2;
-                break;
-
-            case CurrentState.Dead:
-                break;
-        }
-
-
-    }
-
-    private void AngryMovement()
-    {
-        _waypointContainer.SetActive(true);
-
-        if (_canMove == true)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, _waypoints[_currentWaypointTarget].position, _speed * Time.deltaTime);
-        }
-        else if (_canMove == false)
-        {
-            StartCoroutine(MovementRoutine());
-        }
-    }
-
-    private IEnumerator MovementRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-        _canMove = true;
-    }
-
-    private IEnumerator MoveToStartRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-        _isMovingToStartPos = true;
+        CheckState();
     }
 
     private void CheckState()
     {
-        if (_health > 50)
+        switch (_currentState)
         {
-            _currentState = CurrentState.Calm;
+            case EnemyCurentState.Idle:
+                if (_isIdle == true)
+                    StartCoroutine(IdlePostionRoutine());
+                break;
+            case EnemyCurentState.Moving:
+                Movement();
+                break;
+            case EnemyCurentState.Attacking:
+                if (!_isRageMode)
+                {
+                    BasicFiring();
+                }
+                else
+                {
+                    ScatterFire();
+                }
+                break;
+            case EnemyCurentState.LaserAttack:
+                anim.SetTrigger("Laser");
+                break;
+            case EnemyCurentState.Dead:
+
+                break;
         }
-        else if (_health < 51 && _health > 10)
+    }
+
+    //While in Idle Position every few seconds decide weather to move or fire.
+    private IEnumerator IdlePostionRoutine()
+    {
+        _isIdle = false;
+        yield return new WaitForSeconds(2f);
+        int randState = UnityEngine.Random.Range(0, 4);
+        switch (randState)
         {
-            _currentState = CurrentState.Angry;
+            case 0://Return to Idle state
+                SetState(EnemyCurentState.Idle);
+                SetToIdle();
+                break;
+            case 1://move
+                SetState(EnemyCurentState.Moving);
+                break;
+            case 2://Fire
+                SetState(EnemyCurentState.Attacking);
+                yield return new WaitForSeconds(2f);
+                SetState(EnemyCurentState.Idle);
+                SetToIdle();
+                break;
+            case 3://Fire Laser
+                if(_isRageMode)
+                {
+                    SetState(EnemyCurentState.LaserAttack);
+                }else
+                {
+                    SetState(EnemyCurentState.Idle);
+                    SetToIdle();
+                }
+                break;
         }
-        else if (_health < 11 && _health > 0)
+    }
+
+    public void SetToIdle()
+    {
+        _isIdle = true;
+    }
+
+    public void SetToInvincible()
+    {
+        _isInvincible = true;
+    }
+
+    public void SetToVulnerable()
+    {
+        _isInvincible = false;
+    }
+
+    private void Damage(int dmgAmount)
+    {
+        if (_isInvincible)
+            return;
+        _health -= dmgAmount;
+
+        if (_health <= 0)
         {
-            _currentState = CurrentState.Enraged;
+            _currentState = EnemyCurentState.Dead;
+            Instantiate(_explosion, transform.position, Quaternion.identity);
+            Destroy(gameObject, .5f);
         }
-        else if (_health < 1)
+    }
+
+    public void SetState(EnemyCurentState enemyCurentState)
+    {
+        _currentState = enemyCurentState;
+        if (enemyCurentState == EnemyCurentState.Attacking)
+            canFire = true;
+        else
+            StopAllCoroutines();
+    }
+
+    public void ResetTriggers()
+    {
+        foreach (var animPram in anim.parameters)
         {
-            _health = 0;
-            _currentState = CurrentState.Dead;
+            if (animPram.type == AnimatorControllerParameterType.Trigger)
+            {
+                anim.ResetTrigger(animPram.name);
+            }
+        }
+    }
+
+    private void BasicFiring()
+    {
+        if (canFire == true)
+        {
+            StartCoroutine(BasicfireRoutine());
+            canFire = false;
+        }
+    }
+
+    private IEnumerator BasicfireRoutine()
+    {
+        while (true)
+        {
+            GameObject bossRightLaser = Instantiate(_enemyLaser, _rightTurrent.position, Quaternion.identity);
+            Laser rightLaser = bossRightLaser.GetComponentInChildren<Laser>();
+            rightLaser.AssignEnemyLaser();
+            yield return new WaitForSeconds(_turrentFireTime);
+            GameObject bossLeftLaser = Instantiate(_enemyLaser, _leftTurrent.position, Quaternion.identity);
+            Laser leftLaser = bossLeftLaser.GetComponentInChildren<Laser>();
+            leftLaser.AssignEnemyLaser();
+            yield return new WaitForSeconds(_turrentFireTime);
+        }
+    }
+
+    private void ScatterFire()
+    {
+        if (canFire == true)
+        {
+            StartCoroutine(ScatterFireRoutine());
+            canFire = false;
+        }
+    }
+
+    private IEnumerator ScatterFireRoutine()
+    {
+        for (int fireAngle = 0; fireAngle < 360; fireAngle += 30)
+        {
+            var newBullet = Instantiate(_scatterBomb, transform.position, Quaternion.identity);
+            newBullet.transform.eulerAngles = Vector3.forward * fireAngle;
+        }
+        yield return new WaitForSeconds(_scatterFireTime);
+        canFire = true;
+    }
+
+    private void Movement()
+    {
+        if (!_isRageMode)
+        {
+            int randMove = UnityEngine.Random.Range(0, 2);
+            if (randMove == 0)
+            {
+                anim.SetTrigger("MoveLeft");
+            }
+            else if (randMove == 1)
+            {
+                anim.SetTrigger("MoveRight");
+            }
+        }
+        else
+        {
+            anim.SetTrigger("RageMove");
         }
     }
 
@@ -138,32 +255,26 @@ public class Boss : MonoBehaviour
             if (player != null)
             {
                 player.Damage();
-                _health--;
+                Damage(_playerShipDmg);
             }
         }
 
         if (collision.CompareTag("Laser"))
         {
-            _health--;
             Destroy(collision.gameObject);
+            Damage(_laserDmg);
         }
-    }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("BossWaypoint") && _isMovingToStartPos == false)
+        if (collision.CompareTag("Missile"))
         {
-            if (transform.position == _waypoints[_currentWaypointTarget].position)
-            {
-                _currentWaypointTarget += 1;
-                _canMove = false;
-                
-                if (_currentWaypointTarget >= _waypoints.Length)
-                {
-                    _currentWaypointTarget = 0;
-                }
-                StartCoroutine(MovementRoutine());
-            }
+            Destroy(collision.gameObject);
+            Damage(_heatSeekingDmg);
+        }
+
+        if (collision.CompareTag("Homing Missile"))
+        {
+            Destroy(collision.gameObject);
+            Damage(_homingMissileDmg);
         }
     }
 }

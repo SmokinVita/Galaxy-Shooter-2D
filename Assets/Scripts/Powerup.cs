@@ -57,6 +57,9 @@ public class Powerup : MonoBehaviour
                     case 6:
                         player.NegitivePowerup();
                         break;
+                    case 7:
+                        player.HomingMissileActive();
+                        break;
                     default:
                         Debug.Log("No powerup selected!");
                         break;

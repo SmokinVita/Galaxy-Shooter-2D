@@ -13,6 +13,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _enemyPrefab;
     private GameObject _selectedEnemy;
     private int _totalEnemyWeight = 0;
+    [SerializeField]
+    private GameObject _bossPrefab;
 
     [SerializeField]
     private GameObject _enemyContainer;
@@ -63,7 +65,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (_currentWave == _maxWave)
         {
-            Debug.Log("Enter Boss!");
+            Instantiate(_bossPrefab, transform.position, _bossPrefab.transform.rotation);
             _uIManager.BossIncoming();
         }
         else

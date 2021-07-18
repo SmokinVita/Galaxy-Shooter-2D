@@ -61,6 +61,8 @@ public class Player : MonoBehaviour
     private int _currentShieldStrength;
     [SerializeField]
     private int _maxShieldStrength = 3;
+    [SerializeField]
+    private GameObject _homingMissile;
 
     [Header("Magnet Info")]
     [SerializeField]
@@ -75,6 +77,7 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isMissileShotActive = false;
     private bool _isShieldActive = false;
+    private bool _isHomingMissileActive;
 
     private Vector3 _scaleUP = new Vector3(1,1,1);
     private Vector3 _originalScale;
@@ -183,6 +186,11 @@ public class Player : MonoBehaviour
             else if (_isMissileShotActive)
             {
                 Instantiate(_missileShot, transform.position + offset, Quaternion.identity);
+            }
+            else if(_isHomingMissileActive)
+            {
+                Instantiate(_homingMissile, transform.position + offset, Quaternion.identity);
+                _isHomingMissileActive = false;
             }
             else
             {
@@ -327,6 +335,7 @@ public class Player : MonoBehaviour
     public void TripleShotActivate()
     {
         _isTripleShotActive = true;
+        RefillAmmo();
         StartCoroutine(TripleShotPowerDownRoutine());
     }
 
@@ -339,6 +348,7 @@ public class Player : MonoBehaviour
     public void MissileActive()
     {
         _isMissileShotActive = true;
+        RefillAmmo();
         StartCoroutine(MissileShotPowerDownRoutine());
     }
 
@@ -346,6 +356,11 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(5f);
         _isMissileShotActive = false;
+    }
+
+    public void HomingMissileActive()
+    {
+        _isHomingMissileActive = true;
     }
 
     public void SpeedBoostActivate()
